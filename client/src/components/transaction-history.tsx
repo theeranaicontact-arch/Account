@@ -27,9 +27,13 @@ export default function TransactionHistory() {
     );
   }
 
+  console.log('Transactions data:', transactions); // Debug log
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    const year = date.getFullYear();
+    const shortYear = year.toString().slice(-2);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${shortYear}`;
   };
 
   const getTypeColor = (type: string) => {
@@ -74,7 +78,12 @@ export default function TransactionHistory() {
     <Card>
       <CardContent className="p-0">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">รายการล่าสุด</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900">รายการทั้งหมด</h2>
+            <div className="text-sm text-gray-500">
+              จำนวน {transactions.length} รายการ
+            </div>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -97,37 +106,46 @@ export default function TransactionHistory() {
                   </TableCell>
                 </TableRow>
               ) : (
-                transactionsWithBalance.map((transaction) => {
+                transactionsWithBalance.map((transaction, index) => {
                   const debit = parseFloat(transaction.debitAmount || '0');
                   const credit = parseFloat(transaction.creditAmount || '0');
                   const taxStatus = getTaxStatus(transaction.type);
                   
                   return (
-                    <TableRow key={transaction.id} className="hover:bg-gray-50" data-testid={`row-transaction-${transaction.id}`}>
+                    <TableRow key={`${transaction.id}-${index}`} className="hover:bg-gray-50" data-testid={`row-transaction-${transaction.id}`}>
                       <TableCell className="whitespace-nowrap text-sm text-gray-900" data-testid={`text-date-${transaction.id}`}>
                         {formatDate(transaction.transactionDate)}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <Badge className={`${getTypeColor(transaction.type)}`} data-testid={`badge-type-${transaction.id}`}>
-                          {transaction.type}
-                        </Badge>
+                        <div className="space-y-1">
+                          <Badge className={`${getTypeColor(transaction.type)}`} data-testid={`badge-type-${transaction.id}`}>
+                            {transaction.type}
+                          </Badge>
+                          {transaction.notes && (
+                            <div className="text-xs text-gray-500 max-w-xs truncate" title={transaction.notes}>
+                              {transaction.notes}
+                            </div>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm text-gray-900" data-testid={`text-debit-${transaction.id}`}>
                         {debit > 0 ? (
                           <span className="text-red-600 font-medium">{formatCurrency(debit)}</span>
                         ) : (
-                          '-'
+                          <span className="text-gray-400">-</span>
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm text-gray-900" data-testid={`text-credit-${transaction.id}`}>
                         {credit > 0 ? (
                           <span className="text-green-600 font-medium">{formatCurrency(credit)}</span>
                         ) : (
-                          '-'
+                          <span className="text-gray-400">-</span>
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm text-gray-900" data-testid={`text-balance-${transaction.id}`}>
-                        {formatCurrency(transaction.runningBalance)}
+                        <span className={transaction.runningBalance >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                          {formatCurrency(transaction.runningBalance)}
+                        </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <Badge className={taxStatus.color} data-testid={`badge-tax-${transaction.id}`}>
