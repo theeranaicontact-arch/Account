@@ -60,16 +60,11 @@ export default function ReportGenerator() {
 
   return (
     <>
-      <Card className="form-section">
-        <CardContent className="p-0">
-          <div className="bg-gradient-to-r from-purple-400 to-purple-500 p-4 text-white rounded-t-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-6xl opacity-20">📊</div>
-            <div className="absolute bottom-0 left-0 text-4xl opacity-30">📋</div>
-            <h2 className="text-lg font-semibold relative z-10">📊 สร้างรายงานน่ารัก 💜</h2>
-            <p className="text-purple-100 text-sm mt-1 relative z-10">✨ สร้างรายงานสรุปและพิมพ์ใบเสร็จสวยๆ</p>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
+      <Card>
+        <CardContent className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">สร้างรายงาน</h2>
+          
+          <div className="space-y-4">
             {/* Report Type */}
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">ประเภทรายงาน</label>
@@ -142,7 +137,6 @@ export default function ReportGenerator() {
                   ส่งออก PDF
                 </Button>
               </div>
-            </div>
             </div>
           </div>
         </CardContent>
