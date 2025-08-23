@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const transactions = pgTable("transactions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  type: varchar("type", { length: 3 }).notNull(), // REG, SID, INV, OIC, TEX, ESS, DIS, DEB, SAV, OEX
+  type: varchar("type", { length: 3 }).notNull(), // REG, SID, INV, OIC, TEX, ESS, DIS, DEB, SAV, OEX, OBA
   debitAmount: decimal("debit_amount", { precision: 10, scale: 2 }),
   creditAmount: decimal("credit_amount", { precision: 10, scale: 2 }),
   transactionDate: date("transaction_date").notNull(),
@@ -21,15 +21,15 @@ export const insertTransactionSchema = createInsertSchema(transactions).omit({
 }).extend({
   debitAmount: z.string().optional(),
   creditAmount: z.string().optional(),
-  type: z.enum(['REG', 'SID', 'INV', 'OIC', 'TEX', 'ESS', 'DIS', 'DEB', 'SAV', 'OEX']),
+  type: z.enum(['REG', 'SID', 'INV', 'OIC', 'TEX', 'ESS', 'DIS', 'DEB', 'SAV', 'OEX', 'OBA']),
 });
 
 export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
 export type Transaction = typeof transactions.$inferSelect;
 
 // Transaction type categories and tax info
-export const INCOME_TYPES = ['REG', 'SID', 'INV', 'OIC', 'TEX'] as const;
-export const EXPENSE_TYPES = ['ESS', 'DIS', 'DEB', 'SAV', 'OEX'] as const;
+export const INCOME_TYPES = ['REG', 'SID', 'INV', 'OIC', 'TEX', 'OBA] as const;
+export const EXPENSE_TYPES = ['ESS', 'DIS', 'DEB', 'SAV', 'OEX', 'OBA'] as const;
 export const TAXABLE_INCOME_TYPES = ['REG', 'SID', 'INV', 'OIC'] as const;
 export const TAX_EXEMPT_INCOME_TYPES = ['TEX'] as const;
 
@@ -47,4 +47,5 @@ export const TRANSACTION_TYPE_INFO = {
   DEB: { nameEn: 'Debt', nameTh: 'ชำระหนี้ / สินเชื่อ', taxable: false },
   SAV: { nameEn: 'Savings / Investment', nameTh: 'การออมเงิน / การลงทุน', taxable: false },
   OEX: { nameEn: 'Other Expense', nameTh: 'รายจ่ายอื่น ๆ (ของขวัญ, บริจาค, ค่าปรับ)', taxable: false },
+  OBA: { nameEn: 'Out of Balance Adjustment', nameTh: 'การปรับยอด OBA', taxable: false },
 } as const;
