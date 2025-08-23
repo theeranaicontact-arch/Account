@@ -24,7 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertTransactionSchema.parse(req.body);
       
-      // Save to local storage
+      // Save to local storage (with duplicate prevention)
       const transaction = await storage.createTransaction(validatedData);
       
       // Auto-sync to Airtable
@@ -51,6 +51,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error creating transaction:", error);
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Validation error", details: error.errors });
+      } else if (error instanceof Error && error.message.includes('Duplicate transaction')) {
+        res.status(409).json({ error: "รายการนี้ถูกเพิ่มไปแล้วเมื่อสักครู่" });
       } else {
         res.status(500).json({ error: "Failed to create transaction" });
       }

@@ -33,6 +33,10 @@ export default function TransactionForm() {
   const createTransactionMutation = useMutation({
     mutationFn: async (data: InsertTransaction) => {
       const response = await apiRequest('POST', '/api/transactions', data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create transaction');
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -43,10 +47,17 @@ export default function TransactionForm() {
       form.reset();
       queryClient.invalidateQueries({ queryKey: ['/api/transactions'] });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      const isNetworkError = error.message.includes('fetch');
+      const isDuplicateError = error.message.includes('รายการนี้ถูกเพิ่มไปแล้ว');
+      
       toast({
-        title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถบันทึกรายการได้",
+        title: isDuplicateError ? "รายการซ้ำ" : "เกิดข้อผิดพลาด",
+        description: isDuplicateError 
+          ? error.message 
+          : isNetworkError 
+            ? "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้" 
+            : "ไม่สามารถบันทึกรายการได้",
         variant: "destructive",
       });
     },

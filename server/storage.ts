@@ -25,7 +25,7 @@ export class MemStorage implements IStorage {
   async getTransactionsByDateRange(startDate: string, endDate: string): Promise<Transaction[]> {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     return Array.from(this.transactions.values())
       .filter(transaction => {
         const date = new Date(transaction.transactionDate);
@@ -35,6 +35,21 @@ export class MemStorage implements IStorage {
   }
 
   async createTransaction(insertTransaction: InsertTransaction): Promise<Transaction> {
+    // Check for duplicate transactions
+    const isDuplicate = Array.from(this.transactions.values()).some(existing => 
+      existing.type === insertTransaction.type &&
+      existing.debitAmount === insertTransaction.debitAmount &&
+      existing.creditAmount === insertTransaction.creditAmount &&
+      existing.transactionDate === insertTransaction.transactionDate &&
+      existing.notes === insertTransaction.notes &&
+      // Check if created within last 5 seconds to prevent accidental double-clicks
+      new Date().getTime() - new Date(existing.createdAt).getTime() < 5000
+    );
+
+    if (isDuplicate) {
+      throw new Error('Duplicate transaction detected within 5 seconds');
+    }
+
     const id = randomUUID();
     const transaction: Transaction = {
       ...insertTransaction,
@@ -54,7 +69,7 @@ export class MemStorage implements IStorage {
     if (!existing) {
       throw new Error(`Transaction with id ${id} not found`);
     }
-    
+
     const updated: Transaction = { ...existing, ...updateData };
     this.transactions.set(id, updated);
     return updated;

@@ -72,6 +72,21 @@ class AirtableService {
     Notes?: string;
   }): Promise<AirtableRecord | null> {
     try {
+      // Check for duplicates in Airtable first
+      const existingRecords = await this.getAllRecords();
+      const isDuplicate = existingRecords.some(record => 
+        record.fields.Type === fields.Type &&
+        record.fields.Debit === fields.Debit &&
+        record.fields.Credit === fields.Credit &&
+        record.fields.Date === fields.Date &&
+        record.fields.Notes === fields.Notes
+      );
+
+      if (isDuplicate) {
+        console.log('Duplicate record found in Airtable, skipping creation');
+        return null;
+      }
+
       const response = await this.makeRequest('POST', '', {
         fields
       });
