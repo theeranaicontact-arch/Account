@@ -2,8 +2,8 @@ interface AirtableRecord {
   id: string;
   fields: {
     Type: string;
-    DebitAmount?: number;
-    CreditAmount?: number;
+    Debit?: number;
+    Credit?: number;
     Date: string;
     Notes?: string;
   };
@@ -21,7 +21,7 @@ class AirtableService {
     // Use environment variables for security
     const apiKey = process.env.AIRTABLE_API_KEY || 'patpMbwJgg5pKSb4t.85edd7ec26dd8c2f421ec033f312eec5ba5bd1ef5b0f7ee765492bb94c14550b';
     const baseId = process.env.AIRTABLE_BASE_ID || 'app4cbr97pcHjtLen';
-    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Transactions';
+    const tableName = process.env.AIRTABLE_TABLE_NAME || 'tbli6mtCTmbSTf2nz';
     
     if (!apiKey || !baseId || !tableName) {
       console.error('Missing Airtable configuration');
@@ -66,8 +66,8 @@ class AirtableService {
 
   async createRecord(fields: {
     Type: string;
-    DebitAmount?: number;
-    CreditAmount?: number;
+    Debit?: number;
+    Credit?: number;
     Date: string;
     Notes?: string;
   }): Promise<AirtableRecord | null> {
@@ -84,8 +84,8 @@ class AirtableService {
 
   async updateRecord(recordId: string, fields: Partial<{
     Type: string;
-    DebitAmount?: number;
-    CreditAmount?: number;
+    Debit?: number;
+    Credit?: number;
     Date: string;
     Notes?: string;
   }>): Promise<AirtableRecord> {

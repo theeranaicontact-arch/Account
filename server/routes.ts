@@ -31,8 +31,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const airtableRecord = await airtableService.createRecord({
           Type: validatedData.type,
-          DebitAmount: validatedData.debitAmount ? parseFloat(validatedData.debitAmount) : undefined,
-          CreditAmount: validatedData.creditAmount ? parseFloat(validatedData.creditAmount) : undefined,
+          Debit: validatedData.debitAmount ? parseFloat(validatedData.debitAmount) : undefined,
+          Credit: validatedData.creditAmount ? parseFloat(validatedData.creditAmount) : undefined,
           Date: validatedData.transactionDate,
           Notes: validatedData.notes || undefined,
         });
@@ -120,8 +120,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const transaction = {
             type: record.fields.Type,
-            debitAmount: record.fields.DebitAmount?.toString() || undefined,
-            creditAmount: record.fields.CreditAmount?.toString() || undefined,
+            debitAmount: record.fields.Debit?.toString() || undefined,
+            creditAmount: record.fields.Credit?.toString() || undefined,
             transactionDate: record.fields.Date,
             notes: record.fields.Notes || undefined,
             airtableId: record.id,
@@ -157,8 +157,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const airtableRecord = await airtableService.createRecord({
             Type: transaction.type,
-            DebitAmount: transaction.debitAmount ? parseFloat(transaction.debitAmount) : undefined,
-            CreditAmount: transaction.creditAmount ? parseFloat(transaction.creditAmount) : undefined,
+            Debit: transaction.debitAmount ? parseFloat(transaction.debitAmount) : undefined,
+            Credit: transaction.creditAmount ? parseFloat(transaction.creditAmount) : undefined,
             Date: transaction.transactionDate,
             Notes: transaction.notes || undefined,
           });
