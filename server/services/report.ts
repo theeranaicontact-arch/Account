@@ -71,12 +71,15 @@ export class ReportService {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
+    // Convert year to Buddhist Era if it's in Christian Era
+    const displayYear = reportData.year < 2500 ? reportData.year + 543 : reportData.year;
+
     let receipt = '';
-    receipt += `        account report ${reportData.year}\n\n`;
+    receipt += `      account report ${displayYear}\n\n`;
     receipt += `Month : ${monthNames[reportData.month - 1]}            Current : THB\n`;
-    receipt += `——————————————————————————————————\n`;
-    receipt += `Date Type Debit Credit          Total\n`;
-    receipt += `——————————————————————————————————\n`;
+    receipt += `_______________________________________\n`;
+    receipt += `Date  Type  Debit  Credit   Total\n`;
+    receipt += `_______________________________________\n`;
 
     let runningTotal = 0;
     reportData.transactions.forEach(transaction => {
@@ -90,26 +93,26 @@ export class ReportService {
       const debitStr = debit > 0 ? debit.toString() : '';
       const creditStr = credit > 0 ? credit.toString() : '';
       
-      receipt += `   -${day.toString().padStart(2)}    ${transaction.type}     ${debitStr.padStart(6)}    ${creditStr.padStart(8)}      ${runningTotal}\n`;
+      receipt += ` -${day.toString().padStart(2)}   ${transaction.type.padEnd(3)}   ${debitStr.padStart(5)}   ${creditStr.padStart(6)}   ${runningTotal}\n`;
     });
 
-    receipt += `                                —————-\n`;
-    receipt += `                                  ${runningTotal}\n`;
-    receipt += `                                —————-\n`;
-    receipt += `——————————————————————————————————\n`;
-    receipt += ` Debit ≈ ${reportData.totalDebit}        Taxable    Amount\n`;
-    receipt += ` Credit ≈ ${reportData.totalCredit}                 —————-\n`;
-    receipt += `                                  ${reportData.taxableAmount}\n`;
+    receipt += `                               ______\n`;
+    receipt += `                                ${runningTotal}\n`;
+    receipt += `                               ______\n\n`;
+
+    receipt += `_______________________________________\n`;
+    receipt += ` Debit ≈ ${Math.round(reportData.totalDebit)}        Taxable    Amount\n`;
+    receipt += ` Credit ≈ ${Math.round(reportData.totalCredit)}                 ______\n`;
     
     // Add type summary
     Object.entries(reportData.typeSummary).forEach(([type, count]) => {
-      receipt += ` ${type}    ≈     ${count}                —————-\n`;
+      receipt += ` ${type.padEnd(3)}   ≈     ${count}                ${Math.round(reportData.taxableAmount)}\n`;
     });
     
+    receipt += `                                ______\n`;
     receipt += `           Tax-Exempt Income\n`;
-    receipt += `              1                —————-\n`;
-    receipt += `                                     ${reportData.taxExemptAmount}\n`;
-    receipt += `                                —————-\n`;
+    receipt += `                                    ${Math.round(reportData.taxExemptAmount)}\n`;
+    receipt += `                                ______\n`;
 
     return receipt;
   }
