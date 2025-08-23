@@ -129,20 +129,23 @@ export default function TransactionForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <optgroup label="รายได้">
-                        {incomeTypes.map(([code, info]) => (
-                          <SelectItem key={code} value={code} disabled={transactionType !== 'income'}>
-                            {code} - {info.nameTh}
-                          </SelectItem>
-                        ))}
-                      </optgroup>
-                      <optgroup label="รายจ่าย">
-                        {expenseTypes.map(([code, info]) => (
-                          <SelectItem key={code} value={code} disabled={transactionType !== 'expense'}>
-                            {code} - {info.nameTh}
-                          </SelectItem>
-                        ))}
-                      </optgroup>
+                      {transactionType === 'income' ? (
+                        <>
+                          {incomeTypes.map(([code, info]) => (
+                            <SelectItem key={code} value={code}>
+                              {code} - {info.nameTh}
+                            </SelectItem>
+                          ))}
+                        </>
+                      ) : (
+                        <>
+                          {expenseTypes.map(([code, info]) => (
+                            <SelectItem key={code} value={code}>
+                              {code} - {info.nameTh}
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
