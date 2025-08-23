@@ -1,0 +1,12 @@
+services:
+- type: web
+  name: account-app
+  env: node
+  plan: free          # ใช้ free plan ได้ (เปลี่ยนเป็น starter/standard ได้ทีหลัง)
+  buildCommand: "npm install && npm run build"
+  startCommand: "npm start"
+  autoDeploy: true    # เปิด auto deploy เมื่อ push ไป GitHub
+  region: singapore   # เลือก region ที่ใกล้ไทยที่สุด
+  envVars:
+    - key: NODE_ENV
+      value: production
