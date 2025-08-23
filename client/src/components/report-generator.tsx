@@ -15,7 +15,7 @@ interface ThermalData {
 export default function ReportGenerator() {
   const [reportType, setReportType] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedMonth, setSelectedMonth] = useState(8); // August
-  const [selectedYear, setSelectedYear] = useState(2568);
+  const [selectedYear, setSelectedYear] = useState(2025);
   const [showThermalModal, setShowThermalModal] = useState(false);
 
   const { data: reportData, refetch: refetchReport } = useQuery({
@@ -85,9 +85,9 @@ export default function ReportGenerator() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2567">2567</SelectItem>
-                    <SelectItem value="2568">2568</SelectItem>
-                    <SelectItem value="2569">2569</SelectItem>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -110,37 +110,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
           {
             type: 'SID',
             creditAmount: '500',
-            transactionDate: '2024-08-01',
+            transactionDate: '2025-08-01',
             notes: 'รายได้เสริมจากงานพิเศษ'
           },
           {
             type: 'ESS',
             debitAmount: '35',
-            transactionDate: '2024-08-01',
+            transactionDate: '2025-08-01',
             notes: 'ค่าอาหาร'
           },
           {
             type: 'REG',
             creditAmount: '1000',
-            transactionDate: '2024-08-02',
+            transactionDate: '2025-08-02',
             notes: 'เงินเดือนประจำ'
           },
           {
             type: 'DIS',
             debitAmount: '200',
-            transactionDate: '2024-08-31',
+            transactionDate: '2025-08-31',
             notes: 'ค่าช้อปปิ้ง'
           },
           {
             type: 'REG',
             creditAmount: '1000',
-            transactionDate: '2024-09-01',
+            transactionDate: '2025-09-01',
             notes: 'เงินเดือนประจำ'
           },
           {
             type: 'OEX',
             debitAmount: '65',
-            transactionDate: '2024-09-30',
+            transactionDate: '2025-09-30',
             notes: 'ค่าของขวัญ'
           }
         ];

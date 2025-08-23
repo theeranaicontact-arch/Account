@@ -16,7 +16,13 @@ export class ReportService {
   static generateMonthlyReport(transactions: Transaction[], month: number, year: number): ReportData {
     const filteredTransactions = transactions.filter(t => {
       const date = new Date(t.transactionDate);
-      return date.getMonth() + 1 === month && date.getFullYear() === year;
+      const transactionYear = date.getFullYear();
+      const transactionMonth = date.getMonth() + 1;
+      
+      // Convert Buddhist Era (BE) to Christian Era (CE) if needed
+      const targetYear = year > 2500 ? year - 543 : year;
+      
+      return transactionMonth === month && transactionYear === targetYear;
     });
 
     let totalDebit = 0;
