@@ -93,10 +93,15 @@ export default function AirtableSync() {
   };
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">จัดการข้อมูล Airtable</h2>
-        
+    <Card className="form-section">
+      <CardContent className="p-0">
+        <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-4 text-white rounded-t-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 text-6xl opacity-20">☁️</div>
+          <div className="absolute bottom-0 left-0 text-4xl opacity-30">🔄</div>
+          <h2 className="text-lg font-semibold relative z-10">☁️ จัดการข้อมูลคลาวด์ 💙</h2>
+          <p className="text-blue-100 text-sm mt-1 relative z-10">✨ ซิงค์ข้อมูลกับ Airtable อย่างง่ายดาย</p>
+        </div>
+        <div className="p-6">
         {/* Status Display */}
         <div className="flex items-center mb-4 p-3 bg-gray-50 rounded-lg">
           {getStatusIcon()}
@@ -108,25 +113,26 @@ export default function AirtableSync() {
         <div className="space-y-3">
           {/* Pull from Airtable */}
           <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full button-kawaii-blue"
             onClick={() => syncFromAirtableMutation.mutate()}
             disabled={syncStatus === 'syncing'}
             data-testid="button-sync-from-airtable"
           >
-            <Download className="w-4 h-4 mr-2" />
-            ดึงข้อมูลจาก Airtable
+            <span className="flex items-center text-lg">
+              <span className="mr-2">📥</span> ดึงข้อมูลจาก Airtable <span className="ml-2">✨</span>
+            </span>
           </Button>
 
           {/* Push to Airtable */}
           <Button
-            variant="outline"
-            className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="w-full button-kawaii-mint"
             onClick={() => pushToAirtableMutation.mutate()}
             disabled={syncStatus === 'syncing'}
             data-testid="button-push-to-airtable"
           >
-            <Upload className="w-4 h-4 mr-2" />
-            ส่งข้อมูลไป Airtable
+            <span className="flex items-center text-lg">
+              <span className="mr-2">📤</span> ส่งข้อมูลไป Airtable <span className="ml-2">🌸</span>
+            </span>
           </Button>
 
           {/* Connection Status */}
@@ -137,10 +143,13 @@ export default function AirtableSync() {
                 เชื่อมต่อกับ Airtable Base: app4cbr97pcHjtLen
               </div>
               <div className="text-xs text-gray-500">
+                สถานะการเชื่อมต่อจะอัพเดทอัตโนมัติ
+                <br />
                 หมายเหตุ: ระบบจะแสดงเฉพาะข้อมูลจาก Airtable เท่านั้น
               </div>
             </div>
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>

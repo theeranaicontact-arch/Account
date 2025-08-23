@@ -80,9 +80,11 @@ export default function TransactionForm() {
   return (
     <Card className="form-section">
       <CardContent className="p-0">
-        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 text-white rounded-t-xl">
-          <h2 className="text-lg font-semibold">💰 เพิ่มรายการใหม่</h2>
-          <p className="text-green-100 text-sm mt-1">บันทึกรายรับ-รายจ่ายประจำวัน</p>
+        <div className="bg-gradient-to-r from-pink-400 to-pink-500 p-4 text-white rounded-t-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 text-6xl opacity-20">🌸</div>
+          <div className="absolute bottom-0 left-0 text-4xl opacity-30">💰</div>
+          <h2 className="text-lg font-semibold relative z-10">🌸 เพิ่มรายการใหม่ 💕</h2>
+          <p className="text-pink-100 text-sm mt-1 relative z-10">✨ บันทึกรายรับ-รายจ่ายประจำวันกันเถอะ!</p>
         </div>
         <div className="p-6">
         
@@ -259,11 +261,20 @@ export default function TransactionForm() {
 
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full button-kawaii-pink"
               disabled={createTransactionMutation.isPending}
               data-testid="button-submit-transaction"
             >
-              {createTransactionMutation.isPending ? 'กำลังบันทึก...' : 'บันทึกรายการ'}
+              {createTransactionMutation.isPending ? (
+                <span className="flex items-center text-lg">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  🌸 กำลังบันทึก...
+                </span>
+              ) : (
+                <span className="flex items-center text-lg">
+                  💾 บันทึกรายการ ✨
+                </span>
+              )}
             </Button>
           </form>
           </Form>
