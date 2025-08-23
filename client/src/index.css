@@ -3,48 +3,54 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(210 25% 7.8431%);
-  --card: hsl(180 6.6667% 97.0588%);
-  --card-foreground: hsl(210 25% 7.8431%);
+  --background: hsl(0 0% 99%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(240 10% 3.9%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(210 25% 7.8431%);
-  --primary: hsl(217.2 91.2% 59.8%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(210 40% 94%);
-  --secondary-foreground: hsl(222.2 84% 4.9%);
-  --muted: hsl(210 40% 96%);
-  --muted-foreground: hsl(215.4 16.3% 46.9%);
-  --accent: hsl(210 40% 94%);
-  --accent-foreground: hsl(222.2 84% 4.9%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: hsl(142.1 76.2% 36.3%);
+  --primary-foreground: hsl(355.7 100% 97.3%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
   --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(214.3 31.8% 91.4%);
-  --input: hsl(214.3 31.8% 91.4%);
-  --ring: hsl(217.2 91.2% 59.8%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(240 5.9% 90%);
+  --ring: hsl(142.1 76.2% 36.3%);
   --chart-1: hsl(12 76% 61%);
   --chart-2: hsl(173 58% 39%);
   --chart-3: hsl(197 37% 24%);
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
-  --sidebar: hsl(180 6.6667% 97.0588%);
-  --sidebar-foreground: hsl(210 25% 7.8431%);
-  --sidebar-primary: hsl(217.2 91.2% 59.8%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(210 40% 94%);
-  --sidebar-accent-foreground: hsl(222.2 84% 4.9%);
-  --sidebar-border: hsl(214.3 31.8% 91.4%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(240 10% 3.9%);
+  --sidebar-primary: hsl(142.1 76.2% 36.3%);
+  --sidebar-primary-foreground: hsl(355.7 100% 97.3%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(240 5.9% 90%);
+  --sidebar-ring: hsl(142.1 76.2% 36.3%);
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: 'Courier New', monospace;
-  --radius: 0.5rem;
+  --radius: 0.75rem;
   
-  /* Custom colors from design */
-  --blue-primary: hsl(217.2 91.2% 59.8%);
-  --green-primary: hsl(159.6 100% 35.1%);
-  --red-primary: hsl(0 84.2% 60.2%);
-  --neutral-primary: hsl(215 13.8% 34.1%);
+  /* Thai Finance App theme */
+  --success: hsl(142.1 76.2% 36.3%);
+  --success-foreground: hsl(0 0% 100%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(0 0% 100%);
+  --info: hsl(221.2 83.2% 53.3%);
+  --info-foreground: hsl(0 0% 100%);
+  --gradient-primary: linear-gradient(135deg, hsl(142.1 76.2% 36.3%) 0%, hsl(142.1 76.2% 46.3%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(221.2 83.2% 63.3%) 100%);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .dark {
@@ -100,6 +106,27 @@
     line-height: 1.2;
     white-space: pre;
     width: 148mm; /* A6 width */
+  }
+  
+  .gradient-card {
+    background: var(--gradient-primary);
+    @apply text-white;
+  }
+  
+  .stats-card {
+    @apply bg-white rounded-xl shadow-lg border-0 hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
+  }
+  
+  .form-section {
+    @apply bg-white rounded-xl shadow-md border-0 p-6 hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  .button-primary {
+    @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+  
+  .button-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-all duration-200;
   }
   
   @media print {

@@ -78,11 +78,15 @@ export default function TransactionForm() {
   const expenseTypes = Object.entries(TRANSACTION_TYPES).filter(([_, info]) => !info.isIncome);
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">บันทึกรายรับ-รายจ่าย</h2>
+    <Card className="form-section">
+      <CardContent className="p-0">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 text-white rounded-t-xl">
+          <h2 className="text-lg font-semibold">💰 เพิ่มรายการใหม่</h2>
+          <p className="text-green-100 text-sm mt-1">บันทึกรายรับ-รายจ่ายประจำวัน</p>
+        </div>
+        <div className="p-6">
         
-        <Form {...form}>
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Transaction Type Toggle */}
             <div>
@@ -262,7 +266,8 @@ export default function TransactionForm() {
               {createTransactionMutation.isPending ? 'กำลังบันทึก...' : 'บันทึกรายการ'}
             </Button>
           </form>
-        </Form>
+          </Form>
+        </div>
       </CardContent>
     </Card>
   );

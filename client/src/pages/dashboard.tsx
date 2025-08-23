@@ -34,19 +34,24 @@ export default function Dashboard() {
   const currentBalance = totalIncome - totalExpenses;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
+      <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900" data-testid="text-app-title">
-                Personal Finance Tracker
+              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg mr-3 flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-white" />
+              </div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent" data-testid="text-app-title">
+                ระบบจัดการการเงินส่วนตัว
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">Connected to Airtable</span>
-              <div className="h-2 w-2 bg-green-500 rounded-full" data-testid="status-airtable-connected"></div>
+              <div className="flex items-center bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
+                <div className="h-2 w-2 bg-green-500 rounded-full mr-2 animate-pulse" data-testid="status-airtable-connected"></div>
+                <span className="text-sm font-medium text-green-700">เชื่อมต่อ Airtable</span>
+              </div>
             </div>
           </div>
         </div>
@@ -56,57 +61,66 @@ export default function Dashboard() {
         {/* Dashboard Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Current Month Balance */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <DollarSign className="w-4 h-4 text-blue-600" />
+          <Card className="stats-card overflow-hidden">
+            <CardContent className="p-0">
+              <div className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-100 text-sm font-medium">ยอดคงเหลือเดือนนี้</p>
+                    <p className="text-2xl font-bold mt-1" data-testid="text-current-balance">
+                      {formatCurrency(currentBalance)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <DollarSign className="w-6 h-6 text-white" />
                   </div>
                 </div>
-                <div className="ml-4">
-                  <dt className="text-sm font-medium text-gray-500">ยอดคงเหลือเดือนนี้</dt>
-                  <dd className="text-2xl font-bold text-gray-900" data-testid="text-current-balance">
-                    {formatCurrency(currentBalance)}
-                  </dd>
+                <div className="mt-4 text-xs text-blue-100">
+                  {currentBalance >= 0 ? '✨ สถานะการเงินดี' : '⚠️ ควรปรับแผนการเงิน'}
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Total Income */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-green-600" />
+          <Card className="stats-card overflow-hidden">
+            <CardContent className="p-0">
+              <div className="p-6 bg-gradient-to-br from-green-500 to-green-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-green-100 text-sm font-medium">รายได้รวม</p>
+                    <p className="text-2xl font-bold mt-1" data-testid="text-total-income">
+                      {formatCurrency(totalIncome)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                 </div>
-                <div className="ml-4">
-                  <dt className="text-sm font-medium text-gray-500">รายได้รวม</dt>
-                  <dd className="text-2xl font-bold text-green-600" data-testid="text-total-income">
-                    {formatCurrency(totalIncome)}
-                  </dd>
+                <div className="mt-4 text-xs text-green-100">
+                  {currentMonthTransactions.filter(t => t.creditAmount).length} รายการ
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Total Expenses */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                    <TrendingDown className="w-4 h-4 text-red-600" />
+          <Card className="stats-card overflow-hidden">
+            <CardContent className="p-0">
+              <div className="p-6 bg-gradient-to-br from-red-500 to-red-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-red-100 text-sm font-medium">รายจ่ายรวม</p>
+                    <p className="text-2xl font-bold mt-1" data-testid="text-total-expenses">
+                      {formatCurrency(totalExpenses)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <TrendingDown className="w-6 h-6 text-white" />
                   </div>
                 </div>
-                <div className="ml-4">
-                  <dt className="text-sm font-medium text-gray-500">รายจ่ายรวม</dt>
-                  <dd className="text-2xl font-bold text-red-600" data-testid="text-total-expenses">
-                    {formatCurrency(totalExpenses)}
-                  </dd>
+                <div className="mt-4 text-xs text-red-100">
+                  {currentMonthTransactions.filter(t => t.debitAmount).length} รายการ
                 </div>
               </div>
             </CardContent>

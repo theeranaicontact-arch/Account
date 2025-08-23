@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -64,6 +64,9 @@ export default function ThermalPreviewModal({ isOpen, onClose, thermalData }: Th
               <X className="w-4 h-4" />
             </Button>
           </div>
+          <DialogDescription>
+            ดูตัวอย่างรายงานก่อนพิมพ์ในรูปแบบ A6 สำหรับเครื่องพิมพ์ใบเสร็จ
+          </DialogDescription>
         </DialogHeader>
         
         {/* A6 Thermal Receipt Preview */}
