@@ -131,9 +131,14 @@ export default function AirtableSync() {
 
           {/* Connection Status */}
           <div className="border-t pt-4">
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-              เชื่อมต่อกับ Airtable Base: app4cbr97pcHjtLen
+            <div className="text-sm text-gray-600 space-y-2">
+              <div className="flex items-center">
+                <div className={`h-2 w-2 rounded-full mr-2 ${syncStatus === 'success' ? 'bg-green-500' : syncStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
+                เชื่อมต่อกับ Airtable Base: app4cbr97pcHjtLen
+              </div>
+              <div className="text-xs text-gray-500">
+                หมายเหตุ: ระบบจะแสดงเฉพาะข้อมูลจาก Airtable เท่านั้น
+              </div>
             </div>
           </div>
         </div>

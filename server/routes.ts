@@ -98,86 +98,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sync with Airtable (pull from Airtable) + Auto populate sample data
+  // Sync with Airtable (pull from Airtable only)
   app.post("/api/sync/airtable", async (req, res) => {
     try {
       const airtableRecords = await airtableService.getAllRecords();
       let syncedCount = 0;
       
-      // If no records from Airtable, populate with sample data
+      // Clear existing data first to ensure only Airtable data
+      const existingTransactions = await storage.getTransactions();
+      for (const transaction of existingTransactions) {
+        await storage.deleteTransaction(transaction.id);
+      }
+      
+      // Only sync data from Airtable
       if (airtableRecords.length === 0) {
-        const sampleData = [
-          {
-            type: 'SID',
-            creditAmount: '500',
-            transactionDate: '2025-08-01',
-            notes: 'รายได้เสริมจากงานพิเศษ'
-          },
-          {
-            type: 'ESS',
-            debitAmount: '35',
-            transactionDate: '2025-08-01',
-            notes: 'ค่าอาหาร'
-          },
-          {
-            type: 'REG',
-            creditAmount: '1000',
-            transactionDate: '2025-08-02',
-            notes: 'เงินเดือนประจำ'
-          },
-          {
-            type: 'DIS',
-            debitAmount: '200',
-            transactionDate: '2025-08-31',
-            notes: 'ค่าช้อปปิ้ง'
-          },
-          {
-            type: 'REG',
-            creditAmount: '1000',
-            transactionDate: '2025-09-01',
-            notes: 'เงินเดือนประจำ'
-          },
-          {
-            type: 'OEX',
-            debitAmount: '65',
-            transactionDate: '2025-09-30',
-            notes: 'ค่าของขวัญ'
-          }
-        ];
-
-        for (const data of sampleData) {
-          try {
-            await storage.createTransaction(data as any);
-            syncedCount++;
-          } catch (error) {
-            console.error('Failed to create sample data:', error);
-          }
-        }
-        
-        res.json({ message: `สร้างข้อมูลตัวอย่าง ${syncedCount} รายการ (Airtable ไม่พร้อมใช้งาน)` });
+        res.json({ message: "ไม่พบข้อมูลใน Airtable หรือไม่สามารถเชื่อมต่อได้" });
         return;
       }
       
-      // Sync from Airtable if available
       for (const record of airtableRecords) {
         try {
-          // Check if record already exists
-          const existingTransactions = await storage.getTransactions();
-          const exists = existingTransactions.some(t => t.airtableId === record.id);
+          const transaction = {
+            type: record.fields.Type,
+            debitAmount: record.fields.DebitAmount?.toString() || undefined,
+            creditAmount: record.fields.CreditAmount?.toString() || undefined,
+            transactionDate: record.fields.Date,
+            notes: record.fields.Notes || undefined,
+            airtableId: record.id,
+          };
           
-          if (!exists) {
-            const transaction = {
-              type: record.fields.Type,
-              debitAmount: record.fields.DebitAmount?.toString() || undefined,
-              creditAmount: record.fields.CreditAmount?.toString() || undefined,
-              transactionDate: record.fields.Date,
-              notes: record.fields.Notes || undefined,
-              airtableId: record.id,
-            };
-            
-            await storage.createTransaction(transaction as any);
-            syncedCount++;
-          }
+          await storage.createTransaction(transaction as any);
+          syncedCount++;
         } catch (error) {
           console.error(`Failed to sync record ${record.id}:`, error);
         }
@@ -186,7 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: `ดึงข้อมูล ${syncedCount} รายการจาก Airtable` });
     } catch (error) {
       console.error("Error syncing with Airtable:", error);
-      res.status(500).json({ error: "Failed to sync with Airtable" });
+      res.status(500).json({ error: "ไม่สามารถเชื่อมต่อกับ Airtable ได้" });
     }
   });
 
