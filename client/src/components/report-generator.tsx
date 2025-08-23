@@ -28,15 +28,34 @@ export default function ReportGenerator() {
     enabled: false,
   });
 
+  const { data: yearlyThermalData, refetch: refetchYearlyThermal } = useQuery<ThermalData>({
+    queryKey: ['/api/reports/thermal-yearly', selectedYear],
+    enabled: false,
+  });
+
+  const { data: yearlyReportData, refetch: refetchYearlyReport } = useQuery({
+    queryKey: ['/api/reports/yearly', selectedYear],
+    enabled: false,
+  });
+
   const handleGenerateThermalReport = async () => {
-    await refetchThermal();
-    setShowThermalModal(true);
+    if (reportType === 'yearly') {
+      await refetchYearlyThermal();
+      setShowThermalModal(true);
+    } else {
+      await refetchThermal();
+      setShowThermalModal(true);
+    }
   };
 
   const handleGeneratePDFReport = async () => {
-    await refetchReport();
-    // TODO: Implement PDF generation
-    console.log('PDF Report:', reportData);
+    if (reportType === 'yearly') {
+      await refetchYearlyReport();
+      console.log('Yearly PDF Report:', yearlyReportData);
+    } else {
+      await refetchReport();
+      console.log('Monthly PDF Report:', reportData);
+    }
   };
 
   return (
@@ -61,22 +80,24 @@ export default function ReportGenerator() {
             </div>
 
             {/* Date Selection */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700 block mb-2">เดือน</label>
-                <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
-                  <SelectTrigger data-testid="select-month">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {THAI_MONTHS.map((month, index) => (
-                      <SelectItem key={index} value={(index + 1).toString()}>
-                        {month}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className={reportType === 'yearly' ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>
+              {reportType === 'monthly' && (
+                <div>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">เดือน</label>
+                  <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
+                    <SelectTrigger data-testid="select-month">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {THAI_MONTHS.map((month, index) => (
+                        <SelectItem key={index} value={(index + 1).toString()}>
+                          {month}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">ปี</label>
@@ -124,7 +145,7 @@ export default function ReportGenerator() {
       <ThermalPreviewModal
         isOpen={showThermalModal}
         onClose={() => setShowThermalModal(false)}
-        thermalData={thermalData}
+        thermalData={reportType === 'yearly' ? yearlyThermalData : thermalData}
       />
     </>
   );

@@ -79,6 +79,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate yearly report
+  app.get("/api/reports/yearly/:year", async (req, res) => {
+    try {
+      const year = parseInt(req.params.year);
+      
+      if (isNaN(year)) {
+        return res.status(400).json({ error: "Invalid year" });
+      }
+      
+      const transactions = await storage.getTransactions();
+      const reportData = ReportService.generateYearlyReport(transactions, year);
+      
+      res.json(reportData);
+    } catch (error) {
+      console.error("Error generating yearly report:", error);
+      res.status(500).json({ error: "Failed to generate yearly report" });
+    }
+  });
+
   // Generate thermal receipt format
   app.get("/api/reports/thermal/:year/:month", async (req, res) => {
     try {
@@ -97,6 +116,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating thermal receipt:", error);
       res.status(500).json({ error: "Failed to generate thermal receipt" });
+    }
+  });
+
+  // Generate yearly thermal receipt
+  app.get("/api/reports/thermal-yearly/:year", async (req, res) => {
+    try {
+      const year = parseInt(req.params.year);
+      
+      if (isNaN(year)) {
+        return res.status(400).json({ error: "Invalid year" });
+      }
+      
+      const transactions = await storage.getTransactions();
+      const reportData = ReportService.generateYearlyReport(transactions, year);
+      const thermalReceipt = ReportService.generateYearlyThermalReceipt(reportData);
+      
+      res.json({ receipt: thermalReceipt, reportData });
+    } catch (error) {
+      console.error("Error generating yearly thermal receipt:", error);
+      res.status(500).json({ error: "Failed to generate yearly thermal receipt" });
     }
   });
 
