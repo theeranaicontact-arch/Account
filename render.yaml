@@ -1,14 +1,16 @@
-      services:
-      - type: web
-        name: account-app
-        env: node
-        plan: free
-        buildCommand: "npm ci && npm run build"
-        startCommand: "npm start"
-        autoDeploy: true
-        region: singapore
-        envVars:
-          - key: NODE_ENV
-            value: production
-          - key: NODE_VERSION
-            value: 20
+            services:
+            - type: web
+              name: account-app
+              env: node
+              plan: free
+              buildCommand: "npm install && npm run build"
+              startCommand: "npm start"
+              autoDeploy: true
+              region: singapore
+              envVars:
+                - key: NODE_ENV
+                  value: production
+                - key: NODE_VERSION
+                  value: 20
+                - key: NPM_CONFIG_PRODUCTION
+                  value: false   # 👈 สำคัญ! ติดตั้ง devDependencies ด้วย
