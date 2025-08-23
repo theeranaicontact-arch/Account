@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Save to local storage
       const transaction = await storage.createTransaction(validatedData);
       
-      // Sync to Airtable
+      // Auto-sync to Airtable
       try {
         const airtableRecord = await airtableService.createRecord({
           Type: validatedData.type,
@@ -37,11 +37,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           Notes: validatedData.notes || undefined,
         });
         
-        // Update with Airtable ID
-        await storage.updateTransaction(transaction.id, { airtableId: airtableRecord.id } as any);
+        // Update with Airtable ID if successful
+        if (airtableRecord) {
+          await storage.updateTransaction(transaction.id, { airtableId: airtableRecord.id } as any);
+        }
       } catch (airtableError) {
-        console.error("Failed to sync to Airtable:", airtableError);
-        // Continue without failing the request
+        console.error("Failed to auto-sync to Airtable:", airtableError);
+        // Continue without failing the request - data still saved locally
       }
       
       res.json(transaction);
@@ -96,12 +98,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sync with Airtable (pull from Airtable)
+  // Sync with Airtable (pull from Airtable) + Auto populate sample data
   app.post("/api/sync/airtable", async (req, res) => {
     try {
       const airtableRecords = await airtableService.getAllRecords();
       let syncedCount = 0;
       
+      // If no records from Airtable, populate with sample data
+      if (airtableRecords.length === 0) {
+        const sampleData = [
+          {
+            type: 'SID',
+            creditAmount: '500',
+            transactionDate: '2024-08-01',
+            notes: 'รายได้เสริมจากงานพิเศษ'
+          },
+          {
+            type: 'ESS',
+            debitAmount: '35',
+            transactionDate: '2024-08-01',
+            notes: 'ค่าอาหาร'
+          },
+          {
+            type: 'REG',
+            creditAmount: '1000',
+            transactionDate: '2024-08-02',
+            notes: 'เงินเดือนประจำ'
+          },
+          {
+            type: 'DIS',
+            debitAmount: '200',
+            transactionDate: '2024-08-31',
+            notes: 'ค่าช้อปปิ้ง'
+          },
+          {
+            type: 'REG',
+            creditAmount: '1000',
+            transactionDate: '2024-09-01',
+            notes: 'เงินเดือนประจำ'
+          },
+          {
+            type: 'OEX',
+            debitAmount: '65',
+            transactionDate: '2024-09-30',
+            notes: 'ค่าของขวัญ'
+          }
+        ];
+
+        for (const data of sampleData) {
+          try {
+            await storage.createTransaction(data as any);
+            syncedCount++;
+          } catch (error) {
+            console.error('Failed to create sample data:', error);
+          }
+        }
+        
+        res.json({ message: `สร้างข้อมูลตัวอย่าง ${syncedCount} รายการ (Airtable ไม่พร้อมใช้งาน)` });
+        return;
+      }
+      
+      // Sync from Airtable if available
       for (const record of airtableRecords) {
         try {
           // Check if record already exists
@@ -140,6 +197,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const unsynced = transactions.filter(t => !t.airtableId);
       let pushedCount = 0;
 
+      if (unsynced.length === 0) {
+        res.json({ message: "ไม่มีข้อมูลใหม่ที่ต้องส่งไป Airtable" });
+        return;
+      }
+
       for (const transaction of unsynced) {
         try {
           const airtableRecord = await airtableService.createRecord({
@@ -150,15 +212,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             Notes: transaction.notes || undefined,
           });
           
-          // Update local record with Airtable ID
-          await storage.updateTransaction(transaction.id, { airtableId: airtableRecord.id } as any);
-          pushedCount++;
+          // Update local record with Airtable ID if successful
+          if (airtableRecord) {
+            await storage.updateTransaction(transaction.id, { airtableId: airtableRecord.id } as any);
+            pushedCount++;
+          }
         } catch (error) {
           console.error(`Failed to push transaction ${transaction.id}:`, error);
         }
       }
       
-      res.json({ message: `ส่งข้อมูล ${pushedCount} รายการไป Airtable` });
+      if (pushedCount > 0) {
+        res.json({ message: `ส่งข้อมูล ${pushedCount} รายการไป Airtable` });
+      } else {
+        res.json({ message: "ไม่สามารถส่งข้อมูลไป Airtable ได้ในขณะนี้" });
+      }
     } catch (error) {
       console.error("Error pushing to Airtable:", error);
       res.status(500).json({ error: "Failed to push to Airtable" });

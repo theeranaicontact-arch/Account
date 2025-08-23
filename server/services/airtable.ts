@@ -18,8 +18,13 @@ class AirtableService {
   private apiKey: string;
   
   constructor() {
-    this.baseUrl = 'https://api.airtable.com/v0/app4cbr97pcHjtLen/Transactions';
-    this.apiKey = process.env.AIRTABLE_API_KEY || 'patpMbwJgg5pKSb4t.85edd7ec26dd8c2f421ec033f312eec5ba5bd1ef5b0f7ee765492bb94c14550b';
+    // Use the API token provided by user
+    const apiKey = 'patpMbwJgg5pKSb4t.85edd7ec26dd8c2f421ec033f312eec5ba5bd1ef5b0f7ee765492bb94c14550b';
+    const baseId = 'app4cbr97pcHjtLen';
+    const tableName = 'tblFinanceTracker'; // Updated table name
+    
+    this.baseUrl = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+    this.apiKey = apiKey;
   }
 
   private async makeRequest(method: string, endpoint: string = '', data?: any) {
@@ -41,8 +46,14 @@ class AirtableService {
   }
 
   async getAllRecords(): Promise<AirtableRecord[]> {
-    const response: AirtableResponse = await this.makeRequest('GET');
-    return response.records;
+    try {
+      const response: AirtableResponse = await this.makeRequest('GET');
+      return response.records;
+    } catch (error) {
+      console.error('Failed to fetch from Airtable:', error);
+      // Return empty array if Airtable is unavailable
+      return [];
+    }
   }
 
   async createRecord(fields: {
@@ -51,11 +62,16 @@ class AirtableService {
     CreditAmount?: number;
     Date: string;
     Notes?: string;
-  }): Promise<AirtableRecord> {
-    const response = await this.makeRequest('POST', '', {
-      fields
-    });
-    return response;
+  }): Promise<AirtableRecord | null> {
+    try {
+      const response = await this.makeRequest('POST', '', {
+        fields
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to create record in Airtable:', error);
+      return null;
+    }
   }
 
   async updateRecord(recordId: string, fields: Partial<{
