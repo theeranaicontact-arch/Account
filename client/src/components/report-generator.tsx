@@ -7,6 +7,11 @@ import { Printer, Download } from "lucide-react";
 import { THAI_MONTHS } from "@/lib/constants";
 import ThermalPreviewModal from "./thermal-preview-modal";
 
+interface ThermalData {
+  receipt: string;
+  reportData: any;
+}
+
 export default function ReportGenerator() {
   const [reportType, setReportType] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedMonth, setSelectedMonth] = useState(8); // August
@@ -18,7 +23,7 @@ export default function ReportGenerator() {
     enabled: false, // Only fetch when explicitly requested
   });
 
-  const { data: thermalData, refetch: refetchThermal } = useQuery({
+  const { data: thermalData, refetch: refetchThermal } = useQuery<ThermalData>({
     queryKey: ['/api/reports/thermal', selectedYear, selectedMonth],
     enabled: false,
   });

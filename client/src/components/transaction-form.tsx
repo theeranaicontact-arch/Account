@@ -231,6 +231,7 @@ export default function TransactionForm() {
                       rows={3}
                       data-testid="input-notes"
                       {...field}
+                      value={field.value || ''}
                     />
                   </FormControl>
                   <FormMessage />

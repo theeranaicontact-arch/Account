@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, TrendingDown } from "lucide-react";
 import TransactionForm from "@/components/transaction-form";
 import ReportGenerator from "@/components/report-generator";
 import TransactionHistory from "@/components/transaction-history";
+import AirtableSync from "@/components/airtable-sync";
 import { type Transaction } from "@shared/schema";
 import { formatCurrency } from "@/lib/constants";
 
@@ -113,9 +114,10 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <TransactionForm />
           <ReportGenerator />
+          <AirtableSync />
         </div>
 
         {/* Transaction History */}

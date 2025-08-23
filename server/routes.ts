@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sync with Airtable
+  // Sync with Airtable (pull from Airtable)
   app.post("/api/sync/airtable", async (req, res) => {
     try {
       const airtableRecords = await airtableService.getAllRecords();
@@ -104,26 +104,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       for (const record of airtableRecords) {
         try {
-          const transaction = {
-            type: record.fields.Type,
-            debitAmount: record.fields.DebitAmount?.toString() || undefined,
-            creditAmount: record.fields.CreditAmount?.toString() || undefined,
-            transactionDate: record.fields.Date,
-            notes: record.fields.Notes || undefined,
-            airtableId: record.id,
-          };
+          // Check if record already exists
+          const existingTransactions = await storage.getTransactions();
+          const exists = existingTransactions.some(t => t.airtableId === record.id);
           
-          await storage.createTransaction(transaction as any);
-          syncedCount++;
+          if (!exists) {
+            const transaction = {
+              type: record.fields.Type,
+              debitAmount: record.fields.DebitAmount?.toString() || undefined,
+              creditAmount: record.fields.CreditAmount?.toString() || undefined,
+              transactionDate: record.fields.Date,
+              notes: record.fields.Notes || undefined,
+              airtableId: record.id,
+            };
+            
+            await storage.createTransaction(transaction as any);
+            syncedCount++;
+          }
         } catch (error) {
           console.error(`Failed to sync record ${record.id}:`, error);
         }
       }
       
-      res.json({ message: `Synced ${syncedCount} records from Airtable` });
+      res.json({ message: `ดึงข้อมูล ${syncedCount} รายการจาก Airtable` });
     } catch (error) {
       console.error("Error syncing with Airtable:", error);
       res.status(500).json({ error: "Failed to sync with Airtable" });
+    }
+  });
+
+  // Push local data to Airtable
+  app.post("/api/sync/push-to-airtable", async (req, res) => {
+    try {
+      const transactions = await storage.getTransactions();
+      const unsynced = transactions.filter(t => !t.airtableId);
+      let pushedCount = 0;
+
+      for (const transaction of unsynced) {
+        try {
+          const airtableRecord = await airtableService.createRecord({
+            Type: transaction.type,
+            DebitAmount: transaction.debitAmount ? parseFloat(transaction.debitAmount) : undefined,
+            CreditAmount: transaction.creditAmount ? parseFloat(transaction.creditAmount) : undefined,
+            Date: transaction.transactionDate,
+            Notes: transaction.notes || undefined,
+          });
+          
+          // Update local record with Airtable ID
+          await storage.updateTransaction(transaction.id, { airtableId: airtableRecord.id } as any);
+          pushedCount++;
+        } catch (error) {
+          console.error(`Failed to push transaction ${transaction.id}:`, error);
+        }
+      }
+      
+      res.json({ message: `ส่งข้อมูล ${pushedCount} รายการไป Airtable` });
+    } catch (error) {
+      console.error("Error pushing to Airtable:", error);
+      res.status(500).json({ error: "Failed to push to Airtable" });
     }
   });
 

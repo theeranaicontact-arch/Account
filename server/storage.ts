@@ -41,6 +41,9 @@ export class MemStorage implements IStorage {
       id,
       createdAt: new Date(),
       airtableId: null,
+      debitAmount: insertTransaction.debitAmount || null,
+      creditAmount: insertTransaction.creditAmount || null,
+      notes: insertTransaction.notes || null,
     };
     this.transactions.set(id, transaction);
     return transaction;
