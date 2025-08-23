@@ -18,10 +18,14 @@ class AirtableService {
   private apiKey: string;
   
   constructor() {
-    // Use the API token provided by user
-    const apiKey = 'patpMbwJgg5pKSb4t.85edd7ec26dd8c2f421ec033f312eec5ba5bd1ef5b0f7ee765492bb94c14550b';
-    const baseId = 'app4cbr97pcHjtLen';
-    const tableName = 'Transactions'; // Use table name, not table ID
+    // Use environment variables for security
+    const apiKey = process.env.AIRTABLE_API_KEY || 'patpMbwJgg5pKSb4t.85edd7ec26dd8c2f421ec033f312eec5ba5bd1ef5b0f7ee765492bb94c14550b';
+    const baseId = process.env.AIRTABLE_BASE_ID || 'app4cbr97pcHjtLen';
+    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Transactions';
+    
+    if (!apiKey || !baseId || !tableName) {
+      console.error('Missing Airtable configuration');
+    }
     
     this.baseUrl = `https://api.airtable.com/v0/${baseId}/${tableName}`;
     this.apiKey = apiKey;
@@ -47,10 +51,14 @@ class AirtableService {
 
   async getAllRecords(): Promise<AirtableRecord[]> {
     try {
+      console.log('Fetching records from Airtable...');
       const response: AirtableResponse = await this.makeRequest('GET');
+      console.log(`Successfully fetched ${response.records.length} records`);
       return response.records;
     } catch (error) {
       console.error('Failed to fetch from Airtable:', error);
+      console.error('Base URL:', this.baseUrl);
+      console.error('API Key (first 10 chars):', this.apiKey.substring(0, 10) + '...');
       // Return empty array if Airtable is unavailable
       return [];
     }
